@@ -2,10 +2,9 @@
 ### Online interactive questionaire with audio files
 
 This is online interactive questionaire with audio files.
-Everything happens in jscript on the client side.
+Everything happens in jscript on the client side. Mixing REST API and Razor webpages in a single project.
 
-Server side uses SQLite to store responses.
-
+Simple one page dynamic survey with jQuerry/Boostrap and SQLite with EF Core to be hosted on Azure. Simple, fast and effective.
 
 ##### Install Entity Framework Core
 
