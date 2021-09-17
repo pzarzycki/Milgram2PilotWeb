@@ -1,0 +1,271 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<style type="text/css">
+    .tabs {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .tab {
+        top: 50%; /* initial, hidden, position */
+
+        width: 100%;
+        height: 100%;
+        padding: 10% 20px;
+        position: relative;
+    }
+
+    .tab-first {
+        top: 100%
+    }
+
+
+
+    /* Create a custom radio button */
+    .checkmark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 25px;
+        width: 25px;
+        background-color: #eee;
+        border-radius: 50%;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .container:hover input ~ .checkmark {
+        background-color: #ccc;
+    }
+
+    /* When the radio button is checked, add a blue background */
+    input:checked ~ .checkmark {
+        background-color: #2196F3;
+    }
+
+    /* Create the indicator (the dot/circle - hidden when not checked) */
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    /* Show the indicator (dot/circle) when checked */
+    input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Style the indicator (dot/circle) */
+    .checkmark:after {
+        top: 9px;
+        left: 9px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: white;
+    }
+
+    button.disabled {
+        background: #ccc !important;
+        color: #eee !important;
+        border-color: #eee !important;
+    }
+</style>
+
+<script>
+
+
+    function tabshown(tab, index) {
+        name = '/snd/start_test.ogg';
+        if (index > 1)
+            name = '/snd/start_test_2.ogg';
+        var audio = new Audio(name);
+        btn = $(this);
+        audio.onended = function () {
+            btn.removeAttr('disabled');
+            $('.audio-indicator').html('');
+
+            tab.find('.btn-start-audio').removeAttr('disabled');
+        };
+        $(this).attr('disabled', true);
+
+        audio.play();
+        $('.audio-indicator').html('<img src="/img/sound_200.gif" style="width:36px;height:36px;margin:0;padding:0;" />')
+
+    };
+
+    function start_audio(btn, index) {
+        var audio = new Audio('/snd/reply_' + index + '.ogg');
+
+        //btn.closest('.tab').css('background-color','#ffcccc');
+        //alert(btn.parents('.tab').find('.next-btn'));
+
+        audio.onended = function () {
+            btn.removeAttr('disabled');
+            $('.audio-indicator').html('');
+
+            btn.closest('.tab').find('input').removeAttr('disabled');
+            btn.closest('.tab').find('input').click(function () {
+                btn.closest('.tab').find('.next-btn').removeClass('disabled')
+            });
+        };
+        btn.attr('disabled', true);
+
+        audio.play();
+        $('.audio-indicator').html('<img src="/img/sound_200.gif" style="width:36px;height:36px;margin:0;padding:0;" />')
+
+    }
+
+    $('document').ready(function () {
+
+        div = $('.tab-first');
+        div.animate({ 'top': '0px' }, 500, function () {
+            // anim ready here
+        }).attr('data-visible', true);
+
+        $('.next-btn').click(function () {
+            if ($(this).hasClass('disabled') == true)
+                return;
+
+            div = $('.tab[data-visible="true"]');
+            next = div.next();
+            // move out
+            div.animate({ 'top': '-150%' }, 500, function () {
+                // anim ready here
+                $(this).removeAttr('data-visible');
+
+                $(this).remove();
+            });
+
+            //move in
+            next.animate({ 'top': '-100%' }, 500, function () {
+                // anim ready here
+                $(this).css('top', '0px');
+                eval($(this).attr('onshown'));
+            }).attr('data-visible', true);
+
+
+        });
+
+        $('.test-audio-btn').click(function () {
+            var audio = new Audio('/snd/welcome.ogg');
+            btn = $(this);
+            audio.onended = function () {
+                btn.removeAttr('disabled');
+                $('.audio-indicator').html('');
+                btn.parent().parent().find('.next-btn').removeClass('disabled')
+            };
+            $(this).attr('disabled', true);
+
+            audio.play();
+            $('.audio-indicator').html('<img src="/img/sound_200.gif" style="width:36px;height:36px;margin:0;padding:0;" />')
+        });
+    });
+</script>
+
+<div class="container main-body">
+
+    <div class="main-content">
+
+        <div class="tabs">
+            <div class="tab tab-first">
+                <div style="width:70%;float:left;margin-top:80px;">
+                    <div>
+                        <h2>Witamy w interaktywnym badaniu z robotem Pepper</h2>
+                        <p>Witamy w badaniu z roboterm Pepper. Po prawej stronie widzisz robota Peppera. Poprosimy Cię, żebyś posłuchał serii dzwięków, które wydaje robot w reakcji na różne pobudzenia. Następnie poprosimy Cię o ocene, w skali od 1 to 9, jaki poziom dyskomfortu ("bólu") według Ciebie robot odczuwa.</p>
+                        <p>Badanie nie zajmie więcej niż 5 minut.</p>
+                        <p>
+                            &nbsp;
+                        </p>
+                        <p class="font-weight-bold">Upewnij się, że masz podłączone słuchawki albo głośniki. </p>
+
+                    </div>
+                    <div class="clearfix" style="clear:both">
+                        <p>
+                            <button class="test-audio-btn btn btn-success"><i class="fas fa-volume-up"></i>&nbsp;&nbsp;&nbsp;Przetestuj głośniki</button>
+                            <span style="display:inline;margin-left:28px;" class="audio-indicator"></span>
+                        </p>
+                        <hr />
+                        <p class="text-right">
+                            <button class="disabled next-btn btn btn-primary" data-toggle="tooltip" title="Przetestuj głośniki, aby przejść dalej">&nbsp;&nbsp;&nbsp;Dalej&nbsp;&nbsp;&nbsp;</button>
+                        </p>
+                    </div>
+                </div>
+                <div style="width:30%;float:left;overflow:hidden;">
+                    <div style="background: url('/img/pepper.jpg');background-size:cover;background-repeat:no-repeat;width:100%;height:380px">&nbsp;</div>
+                </div>
+            </div>
+
+
+
+            @for (int i = 0; i < 3; i++)
+        {
+            <div class="tab" onshown="tabshown($(this), @(i+1))">
+                <div style="width:70%;float:left;margin-top:80px;">
+                    <div>
+                        <h2>Audio @(i + 1) / 3</h2>
+                        <p>Naciśnij przycisk, aby wysłać sygnał do robota. Posłuchaj jego reakcji.</p>
+
+
+                        <p>
+                            <button disabled class="btn-start-audio btn btn-success" onclick="start_audio($(this), @(i + 1));"><i class="fas fa-volume-up"></i>&nbsp;&nbsp;&nbsp;Start</button>
+                            <span style="display:inline;margin-left:28px;" class="audio-indicator"></span>
+                        </p>
+
+                        <p>&nbsp;</p>
+                        <p>Jak według Ciebie było to nieprzyjemne doświadczenie dla robota?</p>
+
+                        <p>
+                            <script>
+                                for (i = 1; i <= 9; i++) {
+                                    document.write('<div style="margin-right:5%;" class="form-check form-check-inline">' +
+                                        '<input disabled class="checkmark form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio' + i + '" value="' + i + '">' +
+                                        '<label class="form-check-label" for="inlineRadio' + i + '">' + i + ' </label>' +
+                                        '</div>');
+                                }
+                            </script>
+                        </p>
+                        <div style="width:95%;">
+                            <span style="font-size:10pt;"><b>Bardzo słaby</b></span>
+                            <span class="float-right" style="font-size:10pt;"><b>Bardzo silny</b></span>
+                        </div>
+
+
+                        <hr />
+                        <p class="text-right">
+                            <button class="disabled next-btn btn btn-primary" title="Wybierz odpowiedź, aby przejść dalej.">&nbsp;&nbsp;&nbsp;Dalej&nbsp;&nbsp;&nbsp;</button>
+                        </p>
+                    </div>
+                </div>
+                <div style="width:30%;float:left;overflow:hidden;">
+                    <div style="background: url('/img/pepper.jpg');background-size:cover;background-repeat:no-repeat;width:100%;height:380px">&nbsp;</div>
+                </div>
+            </div>
+        }
+
+            <div class="tab tab-last">
+                <div style="width:70%;float:left;margin-top:80px;">
+                    <div>
+                        <h2>Koniec</h2>
+                        <p>Dziękujemy za odpowiedzi. Naciśnij przycisk <b>Zakończ</b> aby zakończyć badanie i przesłać formularz.</p>
+
+                        <hr />
+                        <p class="text-right">
+                            <button class="next-btn btn btn-primary">&nbsp;&nbsp;&nbsp;Zakończ&nbsp;&nbsp;&nbsp;</button>
+                        </p>
+                    </div>
+                </div>
+                <div style="width:30%;float:left;overflow:hidden;">
+                    <div style="background: url('/img/pepper.jpg');background-size:cover;background-repeat:no-repeat;width:100%;height:380px">&nbsp;</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
